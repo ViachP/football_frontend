@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     checkAuth();
   }, []); // ← Пустой массив зависимостей = выполнится один раз при монтировании
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, _password: string) => {
     setLoading(true);
     try {
       // Твоя логика входа
