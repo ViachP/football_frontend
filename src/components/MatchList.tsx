@@ -205,6 +205,8 @@ const MatchList: React.FC = () => {
     team: selectedTeam
   };
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const topBlockRef = useRef<HTMLDivElement>(null);
 
   const getBaseLeagueName = (fullLeagueName: string): string => {
@@ -267,8 +269,10 @@ const MatchList: React.FC = () => {
     }, 100);
   };
 
+
+
   const fetchMatches = async (useCache: boolean = false) => {
-    console.log('useCache:', useCache, 'cache exists:', allMatchesCache.length > 0);
+    
     try {
       setLoading(true);
       setError(null);
@@ -315,14 +319,14 @@ const MatchList: React.FC = () => {
       if (selectedLeagues.length > 0) {
         // МНОЖЕСТВЕННЫЙ ВЫБОР ЛИГ + ДРУГИЕ ФИЛЬТРЫ
         const matchesPromises = selectedLeagues.map(leagueId => 
-          axios.get<Match[]>(`http://localhost:8000/api/matches/?league_id=${leagueId}&${params.toString()}`)
+          axios.get<Match[]>(`${API_BASE_URL}/api/matches/?league_id=${leagueId}&${params.toString()}`)
         );
         const matchesResponses = await Promise.all(matchesPromises);
         const allMatches = matchesResponses.flatMap(response => response.data);
         setMatches(allMatches);
 
         const statsPromises = selectedLeagues.map(leagueId =>
-          axios.get<Statistics>(`http://localhost:8000/api/matches/statistics/?league_id=${leagueId}&${params.toString()}`)
+          axios.get<Statistics>(`${API_BASE_URL}/api/matches/statistics/?league_id=${leagueId}&${params.toString()}`)
         );
         const statsResponses = await Promise.all(statsPromises);
         
@@ -368,10 +372,10 @@ const MatchList: React.FC = () => {
       } else {
         // СТАНДАРТНАЯ ЗАГРУЗКА БЕЗ ЛИГ
         const [matchesResponse, statsResponse,allMatchesResponse] = await Promise.all([
-          axios.get<Match[]>(`http://localhost:8000/api/matches/?${params.toString()}`),
-          axios.get<Statistics>(`http://localhost:8000/api/matches/statistics/?${params.toString()}`),
-          axios.get<Match[]>(`http://localhost:8000/api/matches/`),
-          axios.get<Statistics>(`http://localhost:8000/api/matches/statistics/`)
+          axios.get<Match[]>(`${API_BASE_URL}/api/matches/?${params.toString()}`),
+          axios.get<Statistics>(`${API_BASE_URL}/api/matches/statistics/?${params.toString()}`),
+          axios.get<Match[]>(`${API_BASE_URL}/api/matches/`),
+          axios.get<Statistics>(`${API_BASE_URL}/api/matches/statistics/`)
         ]);
 
         // СОХРАНЯЕМ ТОЛЬКО ЗДЕСЬ - ОДИН РАЗ
@@ -387,8 +391,8 @@ const MatchList: React.FC = () => {
 
       // ЗАГРУЖАЕМ ДАННЫЕ ДЛЯ КЭША И УНИКАЛЬНЫХ ЗНАЧЕНИЙ
       const [allMatchesResponse, allStatsResponse] = await Promise.all([
-        axios.get<Match[]>(`http://localhost:8000/api/matches/`),
-        axios.get<Statistics>(`http://localhost:8000/api/matches/statistics/`)
+        axios.get<Match[]>(`${API_BASE_URL}/api/matches/`),
+        axios.get<Statistics>(`${API_BASE_URL}/api/matches/statistics/`)
       ]);
 
       setAllMatchesCache(allMatchesResponse.data);
@@ -643,7 +647,7 @@ const MatchList: React.FC = () => {
     if (allMatchesCache.length > 0) {
       setMatches(allMatchesCache);
       // Загружаем общую статистику
-      axios.get<Statistics>('http://localhost:8000/api/matches/statistics/')
+      axios.get<Statistics>(`${API_BASE_URL}/api/matches/statistics/`)
         .then(response => setStatistics(response.data))
         .catch(err => console.error('Error loading statistics:', err));
     } else {
@@ -654,7 +658,7 @@ const MatchList: React.FC = () => {
   const fetchStatisticsForAllMatches = async () => {
     try {
       const statsResponse = await axios.get<Statistics>(
-        'http://localhost:8000/api/matches/statistics/'
+        `${API_BASE_URL}/api/matches/statistics/`
       );
       setStatistics(statsResponse.data);
     } catch (err) {
