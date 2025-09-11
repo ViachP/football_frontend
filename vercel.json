@@ -1,5 +1,5 @@
 {
   "functions": {
-    "api/*.py": "@vercel/python"
+    "api/index.py": "@vercel/python"
   }
 }
