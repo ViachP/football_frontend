@@ -1,12 +1,25 @@
 {
-  "functions": {
-    "api/matches.py": {
-      "runtime": "python3.12"
+  "builds": [
+    {
+      "src": "api/**/*.py",
+      "use": "@vercel/python"
     },
-    "api/statistics.py": {
-      "runtime": "python3.12"
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
-  },
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
 }
