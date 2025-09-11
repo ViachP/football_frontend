@@ -1,6 +1,9 @@
 {
   "functions": {
-    "api/**/*.py": {
+    "api/matches.py": {
+      "runtime": "python3.12"
+    },
+    "api/statistics.py": {
       "runtime": "python3.12"
     }
   },
